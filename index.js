@@ -5,14 +5,16 @@
 
     function Mona(defaults, requiredValue) {
         defaults = defaults || {};
-        requiredValue = requiredValue || 'mona-required';
+        requiredValue = requiredValue || 'required';
+        function returnKeyIfRequired (value, key) {
+            if (value === requiredValue) return key;
+        }
         return function Constructor(config) {
-                var methodKeys, methods, properties, requiredKeys;
+                var dMethodKeys, dProperties, dRequiredKeys;
             if (_.isObject(defaults)) {
                 dMethodKeys = _.keys(_.functions(defaults));
-                dMethods = _.pick(defaults, dMethodKeys);
                 dProperties = _.omit(defaults, dMethodKeys);
-                dRequiredKeys = _.keys(_.pick(dProperties, requiredValue));
+                dRequiredKeys = _.reject(_.map(dProperties, returnKeyIfRequired), _.isUndefined);
                 if (_.has(config, dRequiredKeys)) {
                     _.extend(this, _.defaults(config, defaults));
                     return this;
@@ -39,3 +41,4 @@
     }
 
 }());
+
