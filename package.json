@@ -1,0 +1,20 @@
+{
+  "name": "mona",
+  "description": "Constructor Macroid",
+  "author": {
+    "name": "Mac Heller-Ogden",
+    "email": "mac@machellerogden.com"
+  },
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pixeldreamer/mona.git"
+  },
+  "dependencies": {
+    "underscore": "1.4.4"
+  },
+  "files": [
+    "index.js"
+  ],
+  "engine": "node >= 0.8.18"
+}
