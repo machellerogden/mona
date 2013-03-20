@@ -3,15 +3,16 @@
     var _ = require('underscore'),
         mona;
 
-    function Mona(defaults) {
+    function Mona(defaults, requiredValue) {
         defaults = defaults || {};
+        requiredValue = requiredValue || 'mona-required';
         return function Constructor(config) {
                 var methodKeys, methods, properties, requiredKeys;
             if (_.isObject(defaults)) {
                 dMethodKeys = _.keys(_.functions(defaults));
                 dMethods = _.pick(defaults, dMethodKeys);
                 dProperties = _.omit(defaults, dMethodKeys);
-                dRequiredKeys = _.keys(_.pick(dProperties, "monarequired"));
+                dRequiredKeys = _.keys(_.pick(dProperties, requiredValue));
                 if (_.has(config, dRequiredKeys)) {
                     _.extend(this, _.defaults(config, defaults));
                     return this;
