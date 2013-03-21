@@ -1,28 +1,34 @@
 (function(){
 
-    var _ = require('underscore'),
-        mona;
+    var _ = require('underscore');
 
-    function Mona(defaults, requiredValue) {
-        defaults = defaults || {};
-        requiredValue = requiredValue || 'required';
+    function Mona(options) {
+        options = options || {};
+        var defaults = options.defaults || {},
+            required = options.required || 'required',
+            proto = options.proto || {},
+            Constructor;
         function returnKeyIfRequired (value, key) {
-            if (value === requiredValue) return key;
+            if (value === required) return key;
         }
-        return function Constructor(config) {
-                var dMethodKeys, dProperties, dRequiredKeys;
-            if (_.isObject(defaults)) {
-                dMethodKeys = _.keys(_.functions(defaults));
-                dProperties = _.omit(defaults, dMethodKeys);
-                dRequiredKeys = _.reject(_.map(dProperties, returnKeyIfRequired), _.isUndefined);
-                if (_.has(config, dRequiredKeys)) {
-                    _.extend(this, _.defaults(config, defaults));
+        Constructor = (function(){
+            return function Constructor(config) {
+                var requiredKeys;
+                if (_.isObject(defaults)) {
+                    requiredKeys = _.reject(_.map(defaults, returnKeyIfRequired), _.isUndefined);
+                    if (!_.isEmpty(requiredKeys)) {
+                        if (_.has(config, requiredKeys)) {
+                            _.extend(this, _.defaults(config, defaults));
+                        } else {
+                            throw new Error("Error: Something important is missing. Check your configuration -- required keys are: " + requiredKeys.join(', '));
+                        }
+                    }
                     return this;
-                } else {
-                    throw new Error("Error: Something important is missing. Check your configuration -- required keys are: " + dRequiredKeys.join(', '));
                 }
-            }
-        };
+            };
+        }());
+        Constructor.prototype = proto;
+        return Constructor;
     }
 
     // AMD / RequireJS
@@ -41,4 +47,3 @@
     }
 
 }());
-
